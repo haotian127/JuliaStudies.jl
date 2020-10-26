@@ -69,15 +69,19 @@ gif(anim, "selfSimNN_2D_rotation.gif", fps = 5)
 
 
 ## dilation
-N = 256; iter = 5000
+N = 256; iter = 100000
 θx = 2π*rand(N)
 rx = sqrt.(rand(N))
 x = polar2cart(rx, θx)
 disc_plot(x)
 
 # 1. Learning steps
-α = 0.1
+α = 0.01
 anim = @animate for n in 1:iter
+    global α
+    if n > .99*iter
+        α -= 0.01/(.01*iter)
+    end
     # update y
     global θx, rx, x
     d = (rand()-0.5)*2*log(16)
@@ -90,7 +94,7 @@ anim = @animate for n in 1:iter
         nnx[j] = []
     end
     for i in 1:N
-        if !isInDisc(y[i,:], 1)
+        if ry[i] > 1
             continue
         end
         arr = [norm(x[j,:] - y[i,:]) for j in 1:N]
@@ -108,18 +112,18 @@ anim = @animate for n in 1:iter
     rx, θx = cart2polar(x)
     rx = min.(rx, 1)
     x = polar2cart(rx, θx)
-    if n % 50 == 0
+    if n % 1000 == 0
         disc_plot(x)
         title!("iter=$(n)")
     end
-end when n % 50 == 0
+end when n % 1000 == 0
 
-gif(anim, "selfSimNN_2D_dilation.gif", fps = 5)
+gif(anim, "selfSimNN_2D_dilation3.gif", fps = 5)
 
 disc_plot(x)
 
 ## rotation + dilation
-N = 256; iter = 10000
+N = 256; iter = 100000
 θx = 2π*rand(N)
 rx = sqrt.(rand(N))
 x = polar2cart(rx, θx)
@@ -163,16 +167,16 @@ anim = @animate for n in 1:iter
     rx, θx = cart2polar(x)
     rx = min.(rx, 1)
     x = polar2cart(rx, θx)
-    if n % 100 == 0
+    if n % 1000 == 0
         disc_plot(x)
         title!("iter=$(n)")
     end
-end when n % 100 == 0
+end when n % 1000 == 0
 
-gif(anim, "selfSimNN_2D_rotdil.gif", fps = 5)
+gif(anim, "selfSimNN_2D_rotdil2.gif", fps = 5)
 
 plt = disc_plot(x)
-savefig(plt, "figs/selfSimNN_2D_rotdil_final.png")
+savefig(plt, "figs/selfSimNN_2D_rotdil_final2.png")
 
 using NGWP
 _, _, X = SunFlowerGraph(; N=256); sf_plt = disc_plot(X)

@@ -1,12 +1,12 @@
 ## rotation + dilation
-N = 256; iter = 50000
+N = 256; iter = 100000
 θx = 2π*rand(N)
 rx = sqrt.(rand(N))
 x = polar2cart(rx, θx)
 disc_plot(x)
 
 # 1. Learning steps
-α = 0.02
+α = 0.01
 anim = @animate for n in 1:iter
     global α
     if n > .99*iter
@@ -46,4 +46,4 @@ anim = @animate for n in 1:iter
 end
 
 plt = disc_plot(x)
-# savefig(plt, "figs/selfSimNN_2D_rotdil_50000final.png")
+savefig(plt, "figs/selfSimNN_2D_rotdil_100000final.png")
